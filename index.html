@@ -65,31 +65,33 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
+      gap: 8px;
     }
 
     .greeting h1 {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 700;
       letter-spacing: -0.02em;
     }
 
     .greeting p {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
     .header-actions {
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .pill-btn {
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 6px 11px;
+      padding: 6px 10px;
       border-radius: 20px;
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -97,10 +99,16 @@
       gap: 4px;
     }
 
-    .pill-btn.active {
+    .pill-btn.active-wed {
       background: var(--ochre);
       color: #fff;
       border-color: var(--ochre);
+    }
+
+    .pill-btn.active-break {
+      background: var(--sage);
+      color: #fff;
+      border-color: var(--sage);
     }
 
     .status-grid {
@@ -164,12 +172,22 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
+    }
+
+    .founder-zone-banner.break-banner {
+      background: linear-gradient(135deg, var(--sage-soft), #F4F8F6);
+      border-color: var(--sage);
     }
 
     .founder-zone-banner strong {
       font-size: 0.88rem;
       color: var(--terracotta);
       display: block;
+    }
+
+    .founder-zone-banner.break-banner strong {
+      color: var(--sage);
     }
 
     .founder-zone-banner span {
@@ -563,6 +581,7 @@
         <p id="subGreeting">10:00 AM – 2:00 PM Founder Window · Pickup 2:40 PM</p>
       </div>
       <div class="header-actions">
+        <button class="pill-btn" id="breakToggle" onclick="toggleBreakMode()">Break Mode</button>
         <button class="pill-btn" id="wedToggle" onclick="toggleShortDay()">Wed 12:40</button>
         <button class="pill-btn" onclick="sweepUnfinished()">Sweep</button>
       </div>
@@ -579,3 +598,665 @@
         </div>
       </div>
       <div class="status-card">
+        <div class="status-label">
+          <span>Energy Load</span>
+          <span id="energyText">0 / 12 pts</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill energy-fill" id="energyBar" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- VIEW 1: TIMELINE -->
+  <main id="view-today" class="view active">
+    <div class="founder-zone-banner" id="zoneBanner">
+      <div>
+        <strong id="bannerTitle">✨ 10:00 AM – 2:00 PM Founder Sprint</strong>
+        <span id="bannerSub">4 hrs protected build time · Leave at 2:20 PM for 2:40 PM bell.</span>
+      </div>
+      <button class="mini-btn focus-trigger" id="bannerAddBtn" onclick="openAddModal('10:00', 'business')">+ Block</button>
+    </div>
+
+    <div id="timelineContainer" class="task-list"></div>
+  </main>
+
+  <!-- VIEW 2: BRAIN DUMP INBOX -->
+  <main id="view-inbox" class="view">
+    <h2 style="font-size: 1.1rem; margin-bottom: 6px;">Brain Dump Parking Lot</h2>
+    <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">
+      Park business ideas or kid reminders here so you don't hold them in your head during family time.
+    </p>
+    <div class="dump-box">
+      <input type="text" id="dumpInput" placeholder="e.g., Outline digital offer, jot down break idea..." onkeydown="if(event.key==='Enter') addDumpItem()" />
+      <button class="primary-btn" onclick="addDumpItem()">Park</button>
+    </div>
+    <div id="inboxContainer" class="task-list"></div>
+  </main>
+
+  <!-- VIEW 3: WORKING MOM TEMPLATES -->
+  <main id="view-templates" class="view">
+    <h2 style="font-size: 1.1rem; margin-bottom: 6px;">One-Tap Rhythm Templates</h2>
+    <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">
+      Pick the rhythm that matches today's reality—school day, early release, break pocket, or holiday rest.
+    </p>
+
+    <div class="template-card">
+      <h3>🚀 School Day: Mon / Tue / Thu / Fri (2:40 PM Pickup)</h3>
+      <p>Full 4-hour founder window (10:00 AM – 2:00 PM), leave at 2:20 PM for the 2:40 PM school bell.</p>
+      <button class="primary-btn" style="width:100%" onclick="applyTemplate('standard')">Load Regular School Day</button>
+    </div>
+
+    <div class="template-card">
+      <h3>🌿 School Day: Wednesday Early Release (12:40 PM Pickup)</h3>
+      <p>Lighter 2-hour sprint (10:00 AM – 12:00 PM), leave at 12:15 PM for the 12:40 PM bell.</p>
+      <button class="primary-btn" style="width:100%; background: var(--ochre);" onclick="applyTemplate('wednesday')">Load Wednesday Light Day</button>
+    </div>
+
+    <div class="template-card">
+      <h3>🧸 School Break Pocket Day (Thanksgiving / Winter Break)</h3>
+      <p>Drops the 4-hour expectation to ONE 60-minute quiet-pocket sprint (1:00 PM) + family & low-friction rest.</p>
+      <button class="primary-btn" style="width:100%; background: var(--sage);" onclick="applyTemplate('break')">Load Break Pocket Day</button>
+    </div>
+
+    <div class="template-card">
+      <h3>🎉 Zero-Work Holiday / Family Day</h3>
+      <p>100% guilt-free off day for Thanksgiving, holidays, or heavy family days—just family & rest.</p>
+      <button class="primary-btn" style="width:100%; background: var(--slate);" onclick="applyTemplate('holiday')">Load Zero-Work Holiday</button>
+    </div>
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav>
+    <button class="nav-btn active" id="nav-today" onclick="switchView('today')">
+      <span class="icon">📅</span>
+      <span>Timeline</span>
+    </button>
+    <button class="fab-add" onclick="openAddModal()">+</button>
+    <button class="nav-btn" id="nav-inbox" onclick="switchView('inbox')">
+      <span class="icon">🧠</span>
+      <span id="inboxNavLabel">Brain Dump</span>
+    </button>
+    <button class="nav-btn" id="nav-templates" onclick="switchView('templates')">
+      <span class="icon">✨</span>
+      <span>Rhythms</span>
+    </button>
+  </nav>
+
+  <!-- ADD / EDIT MODAL -->
+  <div class="modal-backdrop" id="addModal" onclick="if(event.target===this) closeAddModal()">
+    <div class="modal-sheet">
+      <h2 id="modalHeading">Add Time Block</h2>
+      <div class="form-group">
+        <label>What are you doing?</label>
+        <input type="text" id="taskTitle" placeholder="e.g., Outline offer or jot down 3 ideas" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Start Time</label>
+          <input type="time" id="taskTime" value="10:00" />
+        </div>
+        <div class="form-group">
+          <label>Duration (mins)</label>
+          <select id="taskDuration">
+            <option value="15">15 min (Quick win)</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60" selected>60 min (1 hour)</option>
+            <option value="90">90 min (Deep sprint)</option>
+            <option value="120">120 min (2 hours)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Zone / Category</label>
+          <select id="taskCategory">
+            <option value="business">🚀 Business Sprint</option>
+            <option value="family">💛 Kids & Family</option>
+            <option value="self">🌿 Walk / Rest / Reset</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Brain Energy Cost</label>
+          <select id="taskEnergy">
+            <option value="1">1 pt — Low (Autopilot)</option>
+            <option value="2" selected>2 pts — Medium</option>
+            <option value="3">3 pts — High (Deep Focus)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="mini-btn" style="flex:1; padding:13px;" onclick="closeAddModal()">Cancel</button>
+        <button class="primary-btn" style="flex:2;" onclick="saveTaskFromModal()">Save Block</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN VISUAL FOCUS TIMER -->
+  <div class="focus-overlay" id="focusOverlay">
+    <div>
+      <span class="cat-tag tag-business" id="focusCatBadge">BUSINESS SPRINT</span>
+      <h2 id="focusTaskTitle" style="font-size: 1.35rem; margin-top: 10px;">Deep Work</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">One tab. One task. You’ve got this.</p>
+    </div>
+
+    <div class="ring-wrap">
+      <svg viewBox="0 0 250 250">
+        <circle cx="125" cy="125" r="108" fill="none" stroke="#E6DFD5" stroke-width="14" />
+        <circle id="progressRing" cx="125" cy="125" r="108" fill="none" stroke="#C86D51" stroke-width="14"
+                stroke-dasharray="678.58" stroke-dashoffset="0" stroke-linecap="round" />
+      </svg>
+      <div class="ring-time" id="focusCountdown">25:00</div>
+    </div>
+
+    <div class="focus-controls">
+      <button style="background: var(--surface-warm); color: var(--text);" onclick="closeFocus()">Exit</button>
+      <button id="pauseResumeBtn" style="background: var(--ochre); color: #fff;" onclick="toggleTimerPause()">Pause</button>
+      <button style="background: var(--sage); color: #fff;" onclick="completeFocusedTask()">Done ✓</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'founderflow_mom_v3';
+
+    function isScheduledBreakDate(dateObj = new Date()) {
+      const y = dateObj.getFullYear();
+      const m = dateObj.getMonth() + 1; // 1-12
+      const d = dateObj.getDate();
+
+      // Thanksgiving break window (Nov 22 – Nov 29, 2026)
+      const inThanksgivingBreak = (y === 2026 && m === 11 && d >= 22 && d <= 29);
+
+      // Winter break window (Dec 21, 2026 – Jan 10, 2027)
+      const inWinterBreak =
+        (y === 2026 && m === 12 && d >= 21) ||
+        (y === 2027 && m === 1 && d <= 10);
+
+      return inThanksgivingBreak || inWinterBreak;
+    }
+
+    function getBreakLabel(dateObj = new Date()) {
+      const y = dateObj.getFullYear();
+      const m = dateObj.getMonth() + 1;
+      const d = dateObj.getDate();
+      if (y === 2026 && m === 11 && d >= 22 && d <= 29) return 'Thanksgiving Break';
+      if ((y === 2026 && m === 12 && d >= 21) || (y === 2027 && m === 1 && d <= 10)) return 'Winter Break';
+      return 'School Break';
+    }
+
+    const REGULAR_TASKS = [
+      { id: 't1', time: '07:30', duration: 30, title: 'Kids ready & school drop-off (7:45 AM)', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 't2', time: '08:00', duration: 60, title: 'Morning walk & 15-min kitchen reset', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 't3', time: '09:30', duration: 30, title: 'Coffee, open laptop & pick top 2 business outcomes', category: 'business', energy: 1, done: false, subtasks: [] },
+      { id: 't4', time: '10:00', duration: 90, title: 'Founder Sprint 1: Deep product / creative build', category: 'business', energy: 3, done: false, subtasks: [
+        { text: 'Silence phone & close unrelated tabs (2 min)', done: false },
+        { text: 'Build core deliverable for 45 mins', done: false },
+        { text: 'Save & document progress', done: false }
+      ]},
+      { id: 't5', time: '11:30', duration: 30, title: 'Lunch & step outside (screen break)', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 't6', time: '12:00', duration: 90, title: 'Founder Sprint 2: Marketing, systems & outreach', category: 'business', energy: 3, done: false, subtasks: [] },
+      { id: 't7', time: '13:30', duration: 30, title: 'CEO Shutdown: Log tomorrow’s 10 AM starter step', category: 'business', energy: 1, done: false, subtasks: [] },
+      { id: 't8', time: '14:20', duration: 40, title: 'Leave for school pickup (2:40 PM bell) & snack', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 't9', time: '17:30', duration: 60, title: 'Dinner prep & family table time', category: 'family', energy: 2, done: false, subtasks: [] }
+    ];
+
+    const WEDNESDAY_TASKS = [
+      { id: 'w1', time: '07:30', duration: 30, title: 'Kids ready & school drop-off (7:45 AM)', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 'w2', time: '08:00', duration: 60, title: 'Movement / walk & quick home reset', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 'w3', time: '10:00', duration: 90, title: 'Wednesday Power Sprint: Top 1 needle-moving task', category: 'business', energy: 3, done: false, subtasks: [
+        { text: 'Pick the single highest-impact task only', done: false },
+        { text: 'Work distraction-free until 11:30 AM', done: false }
+      ]},
+      { id: 'w4', time: '11:30', duration: 30, title: 'Light CEO wrap-up & pack water/snacks for car', category: 'business', energy: 1, done: false, subtasks: [] },
+      { id: 'w5', time: '12:15', duration: 45, title: 'Leave for early-release pickup (12:40 PM bell)', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 'w6', time: '13:00', duration: 45, title: 'Lunch with kids & afternoon reset', category: 'family', energy: 1, done: false, subtasks: [] },
+      { id: 'w7', time: '17:30', duration: 60, title: 'Dinner prep & family evening', category: 'family', energy: 2, done: false, subtasks: [] }
+    ];
+
+    const BREAK_TASKS = [
+      { id: 'b1', time: '08:30', duration: 45, title: 'Slow morning, coffee & family breakfast', category: 'family', energy: 1, done: false, subtasks: [] },
+      { id: 'b2', time: '10:00', duration: 90, title: 'Kids activity / outing / creative play', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 'b3', time: '13:00', duration: 60, title: 'Break Pocket Sprint: Low-friction outline or brainstorm (60m)', category: 'business', energy: 2, done: false, subtasks: [
+        { text: 'Jot down 3 ideas or outline next step (15m)', done: false },
+        { text: 'Do one small self-contained task (35m)', done: false },
+        { text: 'Park remaining thoughts in Brain Dump (10m)', done: false }
+      ]},
+      { id: 'b4', time: '15:00', duration: 45, title: 'Fresh air walk or quiet breather', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 'b5', time: '17:30', duration: 60, title: 'Family dinner & relaxed evening', category: 'family', energy: 2, done: false, subtasks: [] }
+    ];
+
+    const HOLIDAY_TASKS = [
+      { id: 'h1', time: '09:00', duration: 120, title: 'Holiday morning with family — zero work laptop', category: 'family', energy: 1, done: false, subtasks: [] },
+      { id: 'h2', time: '14:00', duration: 60, title: 'Quiet rest / walk / reading recharge', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 'h3', time: '17:00', duration: 90, title: 'Holiday meal & evening together', category: 'family', energy: 2, done: false, subtasks: [] }
+    ];
+
+    const todayObj = new Date();
+    const autoBreak = isScheduledBreakDate(todayObj);
+    const autoWed = !autoBreak && todayObj.getDay() === 3;
+
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+      tasks: JSON.parse(JSON.stringify(autoBreak ? BREAK_TASKS : (autoWed ? WEDNESDAY_TASKS : REGULAR_TASKS))),
+      inbox: [
+        { id: 'i1', text: 'Ideas to pick up after break ends' },
+        { id: 'i2', text: 'Low-friction outline task for a quiet afternoon pocket' }
+      ],
+      wedEarly: autoWed,
+      breakMode: autoBreak
+    };
+
+    let timerInterval = null;
+    let remainingSeconds = 0;
+    let totalSeconds = 0;
+    let isPaused = false;
+    let activeFocusTaskId = null;
+    let editingTaskId = null;
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      renderAll();
+    }
+
+    function formatTime12(time24) {
+      const [h, m] = time24.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hour = h % 12 || 12;
+      return `${hour}:${String(m).padStart(2, '0')} ${ampm}`;
+    }
+
+    function renderAll() {
+      const now = new Date();
+      const breakName = getBreakLabel(now);
+      document.getElementById('dateHeader').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+      const breakBtn = document.getElementById('breakToggle');
+      const wedBtn = document.getElementById('wedToggle');
+      const banner = document.getElementById('zoneBanner');
+      const bannerAddBtn = document.getElementById('bannerAddBtn');
+
+      breakBtn.classList.toggle('active-break', state.breakMode);
+      wedBtn.classList.toggle('active-wed', !state.breakMode && state.wedEarly);
+      banner.classList.toggle('break-banner', state.breakMode);
+
+      let targetMins = 240;
+      let targetEnergy = 12;
+
+      if (state.breakMode) {
+        targetMins = 60;
+        targetEnergy = 8;
+        document.getElementById('subGreeting').textContent = `${breakName} Mode · Pocket Sprints Only`;
+        document.getElementById('bannerTitle').textContent = `🧸 ${breakName} — 60m Pocket Sprint`;
+        document.getElementById('bannerSub').textContent = 'Kids are home: shrink the goal to one 60-min window & protect family time.';
+        document.getElementById('founderTargetLabel').textContent = 'Break Goal 1h';
+        bannerAddBtn.onclick = () => openAddModal('13:00', 'business');
+      } else if (state.wedEarly) {
+        targetMins = 120;
+        targetEnergy = 9;
+        document.getElementById('subGreeting').textContent = 'Wednesday Light Load · Early Pickup 12:40 PM';
+        document.getElementById('bannerTitle').textContent = '🌿 10:00 AM – 12:00 PM Light Founder Sprint';
+        document.getElementById('bannerSub').textContent = 'Short day: 2 hrs focused work, leave at 12:15 PM for 12:40 PM bell.';
+        document.getElementById('founderTargetLabel').textContent = 'Wed Goal 2h';
+        bannerAddBtn.onclick = () => openAddModal('10:00', 'business');
+      } else {
+        targetMins = 240;
+        targetEnergy = 12;
+        document.getElementById('subGreeting').textContent = '10:00 AM – 2:00 PM Founder Window · Pickup 2:40 PM';
+        document.getElementById('bannerTitle').textContent = '✨ 10:00 AM – 2:00 PM Founder Sprint';
+        document.getElementById('bannerSub').textContent = '4 hrs protected build time · Leave at 2:20 PM for 2:40 PM bell.';
+        document.getElementById('founderTargetLabel').textContent = 'Founder 4h';
+        bannerAddBtn.onclick = () => openAddModal('10:00', 'business');
+      }
+
+      state.tasks.sort((a, b) => a.time.localeCompare(b.time));
+
+      let founderMinsScheduled = 0;
+      let founderMinsDone = 0;
+      let totalEnergy = 0;
+
+      state.tasks.forEach(t => {
+        totalEnergy += Number(t.energy || 1);
+        if (t.category === 'business') {
+          founderMinsScheduled += Number(t.duration);
+          if (t.done) founderMinsDone += Number(t.duration);
+        }
+      });
+
+      const schedHrs = (founderMinsScheduled / 60).toFixed(1);
+      const doneHrs = (founderMinsDone / 60).toFixed(1);
+      document.getElementById('founderHoursText').textContent = `${doneHrs} / ${schedHrs}h`;
+      document.getElementById('founderBar').style.width = `${Math.min(100, (founderMinsScheduled / targetMins) * 100)}%`;
+      document.getElementById('founderBar').style.background = state.breakMode ? '#5E7A68' : '#C86D51';
+
+      document.getElementById('energyText').textContent = `${totalEnergy} / ${targetEnergy} pts`;
+      const energyPct = Math.min(100, (totalEnergy / targetEnergy) * 100);
+      const energyBar = document.getElementById('energyBar');
+      energyBar.style.width = `${energyPct}%`;
+      energyBar.style.background = totalEnergy > targetEnergy ? '#C86D51' : '#5E7A68';
+
+      const container = document.getElementById('timelineContainer');
+      container.innerHTML = '';
+
+      if (state.tasks.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:28px 0;">No blocks on today’s timeline—enjoy the open space or tap + to add one.</p>`;
+      }
+
+      state.tasks.forEach(task => {
+        const catClass = `cat-${task.category}`;
+        const tagClass = `tag-${task.category}`;
+        const catLabel = task.category === 'business' ? '🚀 BUSINESS' : task.category === 'family' ? '💛 FAMILY / PICKUP' : '🌿 RESET';
+        const energyBolt = '⚡'.repeat(task.energy || 1);
+
+        let subtasksHtml = '';
+        if (task.subtasks && task.subtasks.length > 0) {
+          subtasksHtml = `<div class="subtasks">` + task.subtasks.map((st, idx) => `
+            <div class="subtask-item ${st.done ? 'sub-done' : ''}" onclick="toggleSubtask('${task.id}', ${idx})">
+              <span>${st.done ? '☑' : '☐'}</span>
+              <span>${st.text}</span>
+            </div>
+          `).join('') + `</div>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = `task-card ${catClass} ${task.done ? 'done' : ''}`;
+        card.innerHTML = `
+          <div class="task-top">
+            <div class="check-circle" onclick="toggleTaskDone('${task.id}')">${task.done ? '✓' : ''}</div>
+            <div class="task-main">
+              <div class="task-meta">
+                <span class="time-badge">${formatTime12(task.time)} · ${task.duration}m</span>
+                <span class="cat-tag ${tagClass}">${catLabel}</span>
+                <span class="energy-dots">${energyBolt}</span>
+              </div>
+              <div class="task-title">${task.title}</div>
+              ${subtasksHtml}
+              <div class="task-actions">
+                <button class="mini-btn focus-trigger" onclick="startFocus('${task.id}')">▶ Focus</button>
+                <button class="mini-btn" onclick="openEditModal('${task.id}')">✎ Edit</button>
+                <button class="mini-btn" onclick="splitTask('${task.id}')">🪄 Steps</button>
+                <button class="mini-btn" onclick="deleteTask('${task.id}')">✕</button>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      const inboxContainer = document.getElementById('inboxContainer');
+      document.getElementById('inboxNavLabel').textContent = state.inbox.length ? `Dump (${state.inbox.length})` : 'Brain Dump';
+      const bizTargetTime = state.breakMode ? '13:00' : '10:00';
+      const afterTime = state.breakMode ? '15:00' : (state.wedEarly ? '13:15' : '15:15');
+
+      inboxContainer.innerHTML = state.inbox.length === 0
+        ? `<p style="text-align:center; color:var(--text-muted); padding:24px 0;">Mind clear! Nothing parked right now.</p>`
+        : state.inbox.map(item => `
+          <div class="task-card" style="border-left-color: var(--slate);">
+            <div class="task-title" style="font-size:0.95rem;">${item.text}</div>
+            <div class="task-actions">
+              <button class="mini-btn focus-trigger" onclick="promoteDumpItem('${item.id}', '${bizTargetTime}', 'business')">→ Sprint (${formatTime12(bizTargetTime)})</button>
+              <button class="mini-btn" onclick="promoteDumpItem('${item.id}', '${afterTime}', 'family')">→ Later (${formatTime12(afterTime)})</button>
+              <button class="mini-btn" onclick="deleteDumpItem('${item.id}')">Delete</button>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    function toggleTaskDone(id) {
+      const t = state.tasks.find(x => x.id === id);
+      if (t) {
+        t.done = !t.done;
+        if (t.done) playChime();
+        saveState();
+      }
+    }
+
+    function toggleSubtask(taskId, idx) {
+      const t = state.tasks.find(x => x.id === taskId);
+      if (t && t.subtasks[idx]) {
+        t.subtasks[idx].done = !t.subtasks[idx].done;
+        saveState();
+      }
+    }
+
+    function splitTask(id) {
+      const t = state.tasks.find(x => x.id === id);
+      if (!t) return;
+      if (t.subtasks && t.subtasks.length > 0) {
+        const custom = prompt('Add another micro-step:');
+        if (custom) t.subtasks.push({ text: custom, done: false });
+      } else {
+        t.subtasks = [
+          { text: `Prep workspace & open only what’s needed for "${t.title}"`, done: false },
+          { text: `Do the messy first 15 minutes without editing`, done: false },
+          { text: `Wrap up & note the very next step`, done: false }
+        ];
+      }
+      saveState();
+    }
+
+    function deleteTask(id) {
+      state.tasks = state.tasks.filter(x => x.id !== id);
+      saveState();
+    }
+
+    function sweepUnfinished() {
+      const unfinished = state.tasks.filter(t => !t.done && t.category === 'business');
+      if (unfinished.length === 0) {
+        alert('All business blocks are checked off!');
+        return;
+      }
+      if (confirm(`Move ${unfinished.length} unfinished business block(s) to your Brain Dump Inbox for a clean slate?`)) {
+        unfinished.forEach(t => state.inbox.push({ id: 'i' + Date.now() + Math.random(), text: t.title }));
+        state.tasks = state.tasks.filter(t => t.done || t.category !== 'business');
+        saveState();
+      }
+    }
+
+    function toggleBreakMode() {
+      state.breakMode = !state.breakMode;
+      if (state.breakMode) state.wedEarly = false;
+      saveState();
+    }
+
+    function toggleShortDay() {
+      state.wedEarly = !state.wedEarly;
+      if (state.wedEarly) state.breakMode = false;
+      saveState();
+    }
+
+    function addDumpItem() {
+      const input = document.getElementById('dumpInput');
+      const val = input.value.trim();
+      if (!val) return;
+      state.inbox.unshift({ id: 'i' + Date.now(), text: val });
+      input.value = '';
+      saveState();
+    }
+
+    function promoteDumpItem(id, defaultTime, category) {
+      const item = state.inbox.find(x => x.id === id);
+      if (!item) return;
+      state.tasks.push({
+        id: 't' + Date.now(),
+        time: defaultTime,
+        duration: state.breakMode ? 30 : 45,
+        title: item.text,
+        category: category,
+        energy: 2,
+        done: false,
+        subtasks: []
+      });
+      state.inbox = state.inbox.filter(x => x.id !== id);
+      saveState();
+      switchView('today');
+    }
+
+    function deleteDumpItem(id) {
+      state.inbox = state.inbox.filter(x => x.id !== id);
+      saveState();
+    }
+
+    function applyTemplate(type) {
+      if (!confirm('Replace today’s timeline with this rhythm template?')) return;
+      if (type === 'standard') {
+        state.breakMode = false;
+        state.wedEarly = false;
+        state.tasks = JSON.parse(JSON.stringify(REGULAR_TASKS));
+      } else if (type === 'wednesday') {
+        state.breakMode = false;
+        state.wedEarly = true;
+        state.tasks = JSON.parse(JSON.stringify(WEDNESDAY_TASKS));
+      } else if (type === 'break') {
+        state.breakMode = true;
+        state.wedEarly = false;
+        state.tasks = JSON.parse(JSON.stringify(BREAK_TASKS));
+      } else if (type === 'holiday') {
+        state.breakMode = true;
+        state.wedEarly = false;
+        state.tasks = JSON.parse(JSON.stringify(HOLIDAY_TASKS));
+      }
+      saveState();
+      switchView('today');
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`view-${viewName}`).classList.add('active');
+      document.getElementById(`nav-${viewName}`).classList.add('active');
+    }
+
+    function openAddModal(presetTime = null, presetCat = 'business') {
+      editingTaskId = null;
+      document.getElementById('modalHeading').textContent = 'Add Time Block';
+      document.getElementById('taskTime').value = presetTime || (state.breakMode ? '13:00' : '10:00');
+      document.getElementById('taskDuration').value = state.breakMode ? '30' : '60';
+      document.getElementById('taskCategory').value = presetCat;
+      document.getElementById('taskEnergy').value = '2';
+      document.getElementById('taskTitle').value = '';
+      document.getElementById('addModal').classList.add('open');
+      setTimeout(() => document.getElementById('taskTitle').focus(), 100);
+    }
+
+    function openEditModal(id) {
+      const t = state.tasks.find(x => x.id === id);
+      if (!t) return;
+      editingTaskId = id;
+      document.getElementById('modalHeading').textContent = 'Edit Time Block';
+      document.getElementById('taskTitle').value = t.title;
+      document.getElementById('taskTime').value = t.time;
+      document.getElementById('taskDuration').value = String(t.duration);
+      document.getElementById('taskCategory').value = t.category;
+      document.getElementById('taskEnergy').value = String(t.energy || 2);
+      document.getElementById('addModal').classList.add('open');
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').classList.remove('open');
+      editingTaskId = null;
+    }
+
+    function saveTaskFromModal() {
+      const title = document.getElementById('taskTitle').value.trim();
+      if (!title) return;
+
+      if (editingTaskId) {
+        const t = state.tasks.find(x => x.id === editingTaskId);
+        if (t) {
+          t.title = title;
+          t.time = document.getElementById('taskTime').value;
+          t.duration = Number(document.getElementById('taskDuration').value);
+          t.category = document.getElementById('taskCategory').value;
+          t.energy = Number(document.getElementById('taskEnergy').value);
+        }
+      } else {
+        state.tasks.push({
+          id: 't' + Date.now(),
+          time: document.getElementById('taskTime').value,
+          duration: Number(document.getElementById('taskDuration').value),
+          title,
+          category: document.getElementById('taskCategory').value,
+          energy: Number(document.getElementById('taskEnergy').value),
+          done: false,
+          subtasks: []
+        });
+      }
+      closeAddModal();
+      saveState();
+      switchView('today');
+    }
+
+    function playChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [523.25, 659.25, 783.99].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.14);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime + i * 0.14);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.14 + 0.6);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.14);
+          osc.stop(ctx.currentTime + i * 0.14 + 0.6);
+        });
+      } catch (e) {}
+    }
+
+    function startFocus(id) {
+      const task = state.tasks.find(x => x.id === id);
+      if (!task) return;
+      activeFocusTaskId = id;
+      totalSeconds = task.duration * 60;
+      remainingSeconds = totalSeconds;
+      isPaused = false;
+
+      document.getElementById('focusTaskTitle').textContent = task.title;
+      document.getElementById('focusCatBadge').textContent = task.category.toUpperCase() + ' FOCUS';
+      document.getElementById('pauseResumeBtn').textContent = 'Pause';
+      document.getElementById('focusOverlay').classList.add('open');
+
+      updateRingDisplay();
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!isPaused && remainingSeconds > 0) {
+          remainingSeconds--;
+          updateRingDisplay();
+          if (remainingSeconds === 0) {
+            clearInterval(timerInterval);
+            playChime();
+          }
+        }
+      }, 1000);
+    }
+
+    function updateRingDisplay() {
+      const mins = Math.floor(remainingSeconds / 60);
+      const secs = remainingSeconds % 60;
+      document.getElementById('focusCountdown').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      const circumference = 678.58;
+      const offset = circumference - (remainingSeconds / totalSeconds) * circumference;
+      document.getElementById('progressRing').style.strokeDashoffset = offset;
+    }
+
+    function toggleTimerPause() {
+      isPaused = !isPaused;
+      document.getElementById('pauseResumeBtn').textContent = isPaused ? 'Resume' : 'Pause';
+    }
+
+    function completeFocusedTask() {
+      if (activeFocusTaskId) toggleTaskDone(activeFocusTaskId);
+      closeFocus();
+    }
+
+    function closeFocus() {
+      clearInterval(timerInterval);
+      document.getElementById('focusOverlay').classList.remove('open');
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
