@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="FounderFlow" />
   <meta name="theme-color" content="#FBF8F3" />
-  <title>FounderFlow — Working Mom & Business Planner</title>
+  <title>FounderFlow — Working Mom & Creative Project Planner</title>
 
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23C86D51'/%3E%3Ccircle cx='90' cy='90' r='52' fill='none' stroke='%23FBF8F3' stroke-width='12' stroke-dasharray='240 90' stroke-linecap='round'/%3E%3Ccircle cx='90' cy='90' r='14' fill='%23FBF8F3'/%3E%3C/svg%3E" />
 
@@ -24,6 +24,8 @@
       --sage-soft: #E5EDE8;
       --ochre: #C9963E;
       --ochre-soft: #F9F0DF;
+      --plum: #8A5A75;
+      --plum-soft: #F4E8EF;
       --slate: #5A6B7C;
       --slate-soft: #E8EDF2;
       --border: #E6DFD5;
@@ -113,8 +115,8 @@
 
     .status-grid {
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 10px;
+      grid-template-columns: 1.1fr 1fr 0.9fr;
+      gap: 8px;
       margin-top: 6px;
     }
 
@@ -122,13 +124,13 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 8px 12px;
+      padding: 7px 10px;
     }
 
     .status-label {
-      font-size: 0.7rem;
+      font-size: 0.66rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       color: var(--text-muted);
       font-weight: 700;
       display: flex;
@@ -140,7 +142,7 @@
       background: var(--surface-warm);
       border-radius: 4px;
       overflow: hidden;
-      margin-top: 6px;
+      margin-top: 5px;
     }
 
     .progress-fill {
@@ -152,6 +154,10 @@
 
     .energy-fill {
       background: var(--sage);
+    }
+
+    .fun-fill {
+      background: var(--plum);
     }
 
     .view {
@@ -220,8 +226,17 @@
       border-left-color: var(--ochre);
     }
 
-    .task-card.cat-self {
+    .task-card.cat-fun {
+      border-left-color: var(--plum);
+      background: #FDF9FC;
+    }
+
+    .task-card.cat-errand {
       border-left-color: var(--slate);
+    }
+
+    .task-card.cat-self {
+      border-left-color: var(--sage);
     }
 
     .task-card.done {
@@ -264,6 +279,11 @@
       border-color: var(--terracotta);
     }
 
+    .task-card.cat-fun.done .check-circle {
+      background: var(--plum);
+      border-color: var(--plum);
+    }
+
     .task-main {
       flex: 1;
       min-width: 0;
@@ -295,7 +315,9 @@
 
     .tag-business { background: var(--terracotta-soft); color: var(--terracotta); }
     .tag-family { background: var(--ochre-soft); color: #9A6D1F; }
-    .tag-self { background: var(--slate-soft); color: var(--slate); }
+    .tag-fun { background: var(--plum-soft); color: var(--plum); }
+    .tag-errand { background: var(--slate-soft); color: var(--slate); }
+    .tag-self { background: var(--sage-soft); color: var(--sage); }
 
     .energy-dots {
       font-size: 0.72rem;
@@ -315,21 +337,29 @@
       border-top: 1px dashed var(--border);
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 7px;
     }
 
     .subtask-item {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
-      font-size: 0.84rem;
-      color: var(--text-muted);
-      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text);
     }
 
-    .subtask-item.sub-done {
+    .subtask-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .subtask-item.sub-done .subtask-left {
       text-decoration: line-through;
-      opacity: 0.6;
+      opacity: 0.55;
     }
 
     .task-actions {
@@ -353,6 +383,129 @@
     .mini-btn.focus-trigger {
       background: var(--terracotta);
       color: #fff;
+    }
+
+    .mini-btn.fun-trigger {
+      background: var(--plum);
+      color: #fff;
+    }
+
+    .mini-btn.sage-trigger {
+      background: var(--sage);
+      color: #fff;
+    }
+
+    /* Projects & Accountability Cards */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+    }
+
+    .filter-chip {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .filter-chip.active {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+    }
+
+    .project-card, .account-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--terracotta);
+      border-radius: var(--radius);
+      padding: 15px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .project-card.proj-personal {
+      border-top-color: var(--sage);
+    }
+
+    .account-card.acc-partner {
+      border-top-color: var(--slate);
+    }
+
+    .account-card.acc-rebel {
+      border-top-color: var(--plum);
+    }
+
+    .proj-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .proj-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .proj-notes {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .proj-progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .proj-progress-row .progress-track {
+      flex: 1;
+      margin-top: 0;
+    }
+
+    .proj-pct {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 34px;
+      text-align: right;
+    }
+
+    .script-box {
+      background: var(--surface-warm);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.84rem;
+      color: var(--text);
+      margin: 8px 0 10px;
+    }
+
+    .add-step-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .add-step-row input {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 0.84rem;
+      color: var(--text);
     }
 
     .dump-box {
@@ -415,7 +568,7 @@
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-around;
-      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
       z-index: 30;
     }
 
@@ -423,18 +576,18 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       font-weight: 600;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: 2px;
       cursor: pointer;
-      padding: 4px 12px;
+      padding: 4px 5px;
     }
 
     .nav-btn span.icon {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
     }
 
     .nav-btn.active {
@@ -444,17 +597,17 @@
     .fab-add {
       background: var(--terracotta);
       color: #fff;
-      width: 46px;
-      height: 46px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: none;
-      font-size: 1.6rem;
+      font-size: 1.45rem;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 12px rgba(200, 109, 81, 0.4);
       cursor: pointer;
-      margin-top: -12px;
+      margin-top: -10px;
     }
 
     .modal-backdrop {
@@ -498,7 +651,7 @@
       margin-bottom: 4px;
     }
 
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       padding: 11px 12px;
       border-radius: 10px;
@@ -506,6 +659,7 @@
       background: var(--surface);
       font-size: 0.95rem;
       color: var(--text);
+      font-family: inherit;
     }
 
     .form-row {
@@ -570,6 +724,27 @@
       border: none;
       cursor: pointer;
     }
+
+    .toast {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 120;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -590,8 +765,8 @@
     <div class="status-grid">
       <div class="status-card">
         <div class="status-label">
-          <span id="founderTargetLabel">Founder 4h</span>
-          <span id="founderHoursText">0 / 4.0h</span>
+          <span id="founderTargetLabel">Work 4h</span>
+          <span id="founderHoursText">0/4.0h</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill" id="founderBar" style="width: 0%"></div>
@@ -599,8 +774,17 @@
       </div>
       <div class="status-card">
         <div class="status-label">
-          <span>Energy Load</span>
-          <span id="energyText">0 / 12 pts</span>
+          <span>Fun Break</span>
+          <span id="funMinsText">0/20m</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill fun-fill" id="funBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="status-card">
+        <div class="status-label">
+          <span>Energy</span>
+          <span id="energyText">0/12</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill energy-fill" id="energyBar" style="width: 0%"></div>
@@ -614,56 +798,167 @@
     <div class="founder-zone-banner" id="zoneBanner">
       <div>
         <strong id="bannerTitle">✨ 10:00 AM – 2:00 PM Founder Sprint</strong>
-        <span id="bannerSub">4 hrs protected build time · Leave at 2:20 PM for 2:40 PM bell.</span>
+        <span id="bannerSub">Includes a guilt-free 11:30 AM Fun Break · Leave 2:20 PM.</span>
       </div>
-      <button class="mini-btn focus-trigger" id="bannerAddBtn" onclick="openAddModal('10:00', 'business')">+ Block</button>
+      <button class="mini-btn fun-trigger" onclick="openAddModal('11:30', 'fun')">+ Fun</button>
     </div>
 
     <div id="timelineContainer" class="task-list"></div>
   </main>
 
-  <!-- VIEW 2: BRAIN DUMP INBOX -->
+  <!-- VIEW 2: PROJECTS HUB (WORK & PERSONAL) -->
+  <main id="view-projects" class="view">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <h2 style="font-size: 1.15rem;">Ongoing Projects</h2>
+      <button class="primary-btn" style="padding:8px 12px; font-size:0.82rem;" onclick="openProjectModal()">+ New Project</button>
+    </div>
+    <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 12px;">
+      Track multi-step work & personal creations, then send the next step straight onto today’s timeline.
+    </p>
+
+    <div class="filter-bar">
+      <button class="filter-chip active" id="filter-all" onclick="setProjectFilter('all')">All Projects</button>
+      <button class="filter-chip" id="filter-work" onclick="setProjectFilter('work')">🚀 Work & Creative</button>
+      <button class="filter-chip" id="filter-personal" onclick="setProjectFilter('personal')">🧵 Personal & Craft</button>
+    </div>
+
+    <div id="projectsContainer"></div>
+  </main>
+
+  <!-- VIEW 3: ACCOUNTABILITY (OBLIGER / REBEL OUTER ANCHORS) -->
+  <main id="view-accountability" class="view">
+    <h2 style="font-size: 1.15rem; margin-bottom: 4px;">Outer Accountability Hub</h2>
+    <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 14px;">
+      Built for Obliger-Rebel dynamics: outer commitments you <em>choose</em> yourself—without bossy pressure or over-giving resentment.
+    </p>
+
+    <!-- Card 1: Live Kickoff & Check-In Scripts -->
+    <div class="account-card">
+      <div class="proj-header">
+        <div>
+          <span class="cat-tag tag-business">🤝 OUTER PACT SCRIPTS</span>
+          <div class="proj-title" style="margin-top:4px;">10:00 AM Kickoff & 1:30 PM Check-In</div>
+        </div>
+      </div>
+      <p class="proj-notes">Tap Copy to paste into a text thread with a creative friend or say aloud at the start of a body-doubling session.</p>
+
+      <div class="script-box">
+        <strong>Before Sprint (9:55 AM):</strong><br/>
+        <span id="kickoffScriptText"></span>
+      </div>
+      <div class="task-actions" style="margin-top:0; margin-bottom:10px;">
+        <button class="mini-btn focus-trigger" onclick="copyScript('kickoffScriptText')">📋 Copy 10 AM Pact</button>
+      </div>
+
+      <div class="script-box">
+        <strong>Wrap-Up Check-In (1:30 PM):</strong><br/>
+        <span id="checkinScriptText"></span>
+      </div>
+      <div class="task-actions" style="margin-top:0;">
+        <button class="mini-btn sage-trigger" onclick="copyScript('checkinScriptText')">📋 Copy 1:30 PM Update</button>
+      </div>
+    </div>
+
+    <!-- Card 2: Body Doubling & Accountability Partner Tracker -->
+    <div class="account-card acc-partner">
+      <div class="proj-header">
+        <div>
+          <span class="cat-tag tag-errand">👥 BODY DOUBLING & PARTNER</span>
+          <div class="proj-title" style="margin-top:4px;">External Anchors This Week</div>
+        </div>
+        <span class="time-badge" id="anchorCountBadge">0 sessions</span>
+      </div>
+      <p class="proj-notes">Book a Focusmate session or text your accountability buddy so someone else is expecting you to show up for <em>your</em> block.</p>
+
+      <div class="form-row" style="margin-bottom:8px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Accountability Buddy / Room</label>
+          <input type="text" id="buddyNameInput" placeholder="e.g., Focusmate 50m or Creative Friend" onchange="updateBuddyInfo()" />
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Check-In Channel</label>
+          <input type="text" id="buddyChannelInput" placeholder="e.g., Text at 9:55 AM" onchange="updateBuddyInfo()" />
+        </div>
+      </div>
+
+      <div class="subtasks" id="anchorLogList"></div>
+
+      <div class="task-actions">
+        <button class="mini-btn focus-trigger" onclick="addBodyDoubleBlock()">+ Add 50m Body Double to Timeline</button>
+        <button class="mini-btn" onclick="logAnchorSession()">✓ Log Session Done</button>
+      </div>
+    </div>
+
+    <!-- Card 3: Rebel Resistance & Resentment Guardrail -->
+    <div class="account-card acc-rebel">
+      <div class="proj-header">
+        <div>
+          <span class="cat-tag tag-fun">⚡ REBEL / RESENTMENT GUARDRAIL</span>
+          <div class="proj-title" style="margin-top:4px;">Feeling Stuck or Over-Giving?</div>
+        </div>
+      </div>
+      <p class="proj-notes">Rebels push back when a block feels like an order; Obligers build resentment when other people's needs crowd out their own work.</p>
+
+      <div class="script-box">
+        <strong>Boundary Line for Last-Minute Requests:</strong><br/>
+        "I’m in my build window until 2:00 PM—I can check on that after school pickup if it still makes sense."
+      </div>
+
+      <div class="task-actions">
+        <button class="mini-btn fun-trigger" onclick="shrinkNextBusinessBlock()">🪄 Shrink Next Block to 25m (Choice)</button>
+        <button class="mini-btn" onclick="parkRequestModal()">🧠 Park Someone Else's Request</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 4: BRAIN DUMP INBOX -->
   <main id="view-inbox" class="view">
     <h2 style="font-size: 1.1rem; margin-bottom: 6px;">Brain Dump Parking Lot</h2>
     <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">
-      Park business ideas or kid reminders here so you don't hold them in your head during family time.
+      Park errands, doctor calls, or random ideas here so they stay out of your 10 AM – 2 PM focus block.
     </p>
     <div class="dump-box">
-      <input type="text" id="dumpInput" placeholder="e.g., Outline digital offer, jot down break idea..." onkeydown="if(event.key==='Enter') addDumpItem()" />
+      <input type="text" id="dumpInput" placeholder="e.g., Call Zumba teacher for interview dates, order batting..." onkeydown="if(event.key==='Enter') addDumpItem()" />
       <button class="primary-btn" onclick="addDumpItem()">Park</button>
     </div>
     <div id="inboxContainer" class="task-list"></div>
   </main>
 
-  <!-- VIEW 3: WORKING MOM TEMPLATES -->
+  <!-- VIEW 5: WORKING MOM TEMPLATES -->
   <main id="view-templates" class="view">
     <h2 style="font-size: 1.1rem; margin-bottom: 6px;">One-Tap Rhythm Templates</h2>
     <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">
-      Pick the rhythm that matches today's reality—school day, early release, break pocket, or holiday rest.
+      Pick the rhythm that matches today's reality—including built-in fun breaks, home resets, and errand bookends.
     </p>
 
     <div class="template-card">
-      <h3>🚀 School Day: Mon / Tue / Thu / Fri (2:40 PM Pickup)</h3>
-      <p>Full 4-hour founder window (10:00 AM – 2:00 PM), leave at 2:20 PM for the 2:40 PM school bell.</p>
+      <h3>🚀 Standard School Day (Mon / Tue / Thu / Fri)</h3>
+      <p>Morning walk + laundry start, 10 AM – 2 PM Founder Sprints with a built-in 11:30 AM Fun Break, and 2:20 PM pickup drive.</p>
       <button class="primary-btn" style="width:100%" onclick="applyTemplate('standard')">Load Regular School Day</button>
     </div>
 
     <div class="template-card">
-      <h3>🌿 School Day: Wednesday Early Release (12:40 PM Pickup)</h3>
-      <p>Lighter 2-hour sprint (10:00 AM – 12:00 PM), leave at 12:15 PM for the 12:40 PM bell.</p>
+      <h3>🚗 Errand & Doctor Appointment Day (Bookend Strategy)</h3>
+      <p>Clusters errands & appointments right after drop-off (8:15 AM – 10:15 AM), leaving a clean 10:30 AM – 2:00 PM work window.</p>
+      <button class="primary-btn" style="width:100%; background: var(--slate);" onclick="applyTemplate('errands')">Load Errand / Appt Day</button>
+    </div>
+
+    <div class="template-card">
+      <h3>🌿 Wednesday Early Release (12:40 PM Pickup)</h3>
+      <p>Lighter 2-hour sprint (10:00 AM – 12:00 PM) with a 15-min fun breather, leave at 12:15 PM for the 12:40 PM bell.</p>
       <button class="primary-btn" style="width:100%; background: var(--ochre);" onclick="applyTemplate('wednesday')">Load Wednesday Light Day</button>
     </div>
 
     <div class="template-card">
       <h3>🧸 School Break Pocket Day (Thanksgiving / Winter Break)</h3>
-      <p>Drops the 4-hour expectation to ONE 60-minute quiet-pocket sprint (1:00 PM) + family & low-friction rest.</p>
+      <p>Drops the 4-hour expectation to ONE 60-min quiet-pocket sprint (1:00 PM), a 20-min fun break, & relaxed family time.</p>
       <button class="primary-btn" style="width:100%; background: var(--sage);" onclick="applyTemplate('break')">Load Break Pocket Day</button>
     </div>
 
     <div class="template-card">
       <h3>🎉 Zero-Work Holiday / Family Day</h3>
-      <p>100% guilt-free off day for Thanksgiving, holidays, or heavy family days—just family & rest.</p>
-      <button class="primary-btn" style="width:100%; background: var(--slate);" onclick="applyTemplate('holiday')">Load Zero-Work Holiday</button>
+      <p>100% guilt-free off day for Thanksgiving, holidays, or heavy family days—just family, fun & rest.</p>
+      <button class="primary-btn" style="width:100%; background: var(--plum);" onclick="applyTemplate('holiday')">Load Zero-Work Holiday</button>
     </div>
   </main>
 
@@ -673,10 +968,18 @@
       <span class="icon">📅</span>
       <span>Timeline</span>
     </button>
+    <button class="nav-btn" id="nav-projects" onclick="switchView('projects')">
+      <span class="icon">🗂️</span>
+      <span>Projects</span>
+    </button>
     <button class="fab-add" onclick="openAddModal()">+</button>
+    <button class="nav-btn" id="nav-accountability" onclick="switchView('accountability')">
+      <span class="icon">🤝</span>
+      <span>Account</span>
+    </button>
     <button class="nav-btn" id="nav-inbox" onclick="switchView('inbox')">
       <span class="icon">🧠</span>
-      <span id="inboxNavLabel">Brain Dump</span>
+      <span id="inboxNavLabel">Dump</span>
     </button>
     <button class="nav-btn" id="nav-templates" onclick="switchView('templates')">
       <span class="icon">✨</span>
@@ -684,13 +987,13 @@
     </button>
   </nav>
 
-  <!-- ADD / EDIT MODAL -->
+  <!-- ADD / EDIT TIMELINE MODAL -->
   <div class="modal-backdrop" id="addModal" onclick="if(event.target===this) closeAddModal()">
     <div class="modal-sheet">
       <h2 id="modalHeading">Add Time Block</h2>
       <div class="form-group">
         <label>What are you doing?</label>
-        <input type="text" id="taskTitle" placeholder="e.g., Outline offer or jot down 3 ideas" />
+        <input type="text" id="taskTitle" placeholder="e.g., Film Zumba class B-roll, piece quilt block, or read" />
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -700,9 +1003,12 @@
         <div class="form-group">
           <label>Duration (mins)</label>
           <select id="taskDuration">
-            <option value="15">15 min (Quick win)</option>
+            <option value="15">15 min (Quick break / chore)</option>
+            <option value="20">20 min</option>
+            <option value="25">25 min (Low-pressure choice)</option>
             <option value="30">30 min</option>
             <option value="45">45 min</option>
+            <option value="50">50 min (Body-double block)</option>
             <option value="60" selected>60 min (1 hour)</option>
             <option value="90">90 min (Deep sprint)</option>
             <option value="120">120 min (2 hours)</option>
@@ -713,14 +1019,17 @@
         <div class="form-group">
           <label>Zone / Category</label>
           <select id="taskCategory">
-            <option value="business">🚀 Business Sprint</option>
-            <option value="family">💛 Kids & Family</option>
-            <option value="self">🌿 Walk / Rest / Reset</option>
+            <option value="business">🚀 Business / Work Project</option>
+            <option value="fun">✨ Personal Project / Fun Break</option>
+            <option value="errand">🚗 Errand / Appt / Home</option>
+            <option value="family">💛 Kids & Pickup</option>
+            <option value="self">🌿 Walk / Reset</option>
           </select>
         </div>
         <div class="form-group">
           <label>Brain Energy Cost</label>
           <select id="taskEnergy">
+            <option value="0">0 pts — Recharging (Fun!)</option>
             <option value="1">1 pt — Low (Autopilot)</option>
             <option value="2" selected>2 pts — Medium</option>
             <option value="3">3 pts — High (Deep Focus)</option>
@@ -734,12 +1043,52 @@
     </div>
   </div>
 
+  <!-- ADD / EDIT PROJECT MODAL -->
+  <div class="modal-backdrop" id="projectModal" onclick="if(event.target===this) closeProjectModal()">
+    <div class="modal-sheet">
+      <h2 id="projModalHeading">New Ongoing Project</h2>
+      <div class="form-group">
+        <label>Project Name</label>
+        <input type="text" id="projTitle" placeholder="e.g., Zumba Teacher Documentary, Family Quilt, Shopify Launch" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="projType">
+            <option value="work">🚀 Work & Creative</option>
+            <option value="personal">🧵 Personal & Craft</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="projStatus">
+            <option value="Active">Active Focus</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Idea / Prep">Idea / Prep</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Vision / Quick Notes (optional)</label>
+        <textarea id="projNotes" rows="2" placeholder="e.g., Short character-driven documentary; capture class energy + sit-down interview"></textarea>
+      </div>
+      <div class="form-group" id="initialStepsGroup">
+        <label>First 3 Milestones (one per line)</label>
+        <textarea id="projInitialSteps" rows="3" placeholder="Draft 5 interview questions&#10;Ask permission to film Tuesday class&#10;Gather camera & lav mic kit"></textarea>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="mini-btn" style="flex:1; padding:13px;" onclick="closeProjectModal()">Cancel</button>
+        <button class="primary-btn" style="flex:2;" onclick="saveProjectFromModal()">Save Project</button>
+      </div>
+    </div>
+  </div>
+
   <!-- FULLSCREEN VISUAL FOCUS TIMER -->
   <div class="focus-overlay" id="focusOverlay">
     <div>
       <span class="cat-tag tag-business" id="focusCatBadge">BUSINESS SPRINT</span>
       <h2 id="focusTaskTitle" style="font-size: 1.35rem; margin-top: 10px;">Deep Work</h2>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">One tab. One task. You’ve got this.</p>
+      <p id="focusSubCaption" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">One tab. One task. You’ve got this.</p>
     </div>
 
     <div class="ring-wrap">
@@ -758,18 +1107,17 @@
     </div>
   </div>
 
+  <div class="toast" id="toastBox">Copied!</div>
+
   <script>
-    const STORAGE_KEY = 'founderflow_mom_v3';
+    const STORAGE_KEY = 'founderflow_mom_v6';
 
     function isScheduledBreakDate(dateObj = new Date()) {
       const y = dateObj.getFullYear();
-      const m = dateObj.getMonth() + 1; // 1-12
+      const m = dateObj.getMonth() + 1;
       const d = dateObj.getDate();
 
-      // Thanksgiving break window (Nov 22 – Nov 29, 2026)
       const inThanksgivingBreak = (y === 2026 && m === 11 && d >= 22 && d <= 29);
-
-      // Winter break window (Dec 21, 2026 – Jan 10, 2027)
       const inWinterBreak =
         (y === 2026 && m === 12 && d >= 21) ||
         (y === 2027 && m === 1 && d <= 10);
@@ -788,49 +1136,98 @@
 
     const REGULAR_TASKS = [
       { id: 't1', time: '07:30', duration: 30, title: 'Kids ready & school drop-off (7:45 AM)', category: 'family', energy: 2, done: false, subtasks: [] },
-      { id: 't2', time: '08:00', duration: 60, title: 'Morning walk & 15-min kitchen reset', category: 'self', energy: 1, done: false, subtasks: [] },
-      { id: 't3', time: '09:30', duration: 30, title: 'Coffee, open laptop & pick top 2 business outcomes', category: 'business', energy: 1, done: false, subtasks: [] },
-      { id: 't4', time: '10:00', duration: 90, title: 'Founder Sprint 1: Deep product / creative build', category: 'business', energy: 3, done: false, subtasks: [
+      { id: 't2', time: '08:00', duration: 60, title: 'Morning walk + toss in 1 load of laundry', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 't3', time: '09:30', duration: 30, title: 'Coffee, open laptop & pick top 2 project steps', category: 'business', energy: 1, done: false, subtasks: [] },
+      { id: 't4', time: '10:00', duration: 90, title: 'Founder Sprint 1: Deep creative / business build', category: 'business', energy: 3, done: false, subtasks: [
         { text: 'Silence phone & close unrelated tabs (2 min)', done: false },
-        { text: 'Build core deliverable for 45 mins', done: false },
+        { text: 'Work on top active project milestone for 45 mins', done: false },
         { text: 'Save & document progress', done: false }
       ]},
-      { id: 't5', time: '11:30', duration: 30, title: 'Lunch & step outside (screen break)', category: 'self', energy: 1, done: false, subtasks: [] },
-      { id: 't6', time: '12:00', duration: 90, title: 'Founder Sprint 2: Marketing, systems & outreach', category: 'business', energy: 3, done: false, subtasks: [] },
-      { id: 't7', time: '13:30', duration: 30, title: 'CEO Shutdown: Log tomorrow’s 10 AM starter step', category: 'business', energy: 1, done: false, subtasks: [] },
-      { id: 't8', time: '14:20', duration: 40, title: 'Leave for school pickup (2:40 PM bell) & snack', category: 'family', energy: 2, done: false, subtasks: [] },
-      { id: 't9', time: '17:30', duration: 60, title: 'Dinner prep & family table time', category: 'family', energy: 2, done: false, subtasks: [] }
+      { id: 't5', time: '11:30', duration: 20, title: 'Guilt-Free Fun / Craft Break (quilt block, read, or garden)', category: 'fun', energy: 0, done: false, subtasks: [] },
+      { id: 't6', time: '11:50', duration: 25, title: 'Lunch + switch laundry to dryer', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 't7', time: '12:15', duration: 75, title: 'Founder Sprint 2: Production, outreach & systems', category: 'business', energy: 3, done: false, subtasks: [] },
+      { id: 't8', time: '13:30', duration: 30, title: 'CEO Shutdown: Log tomorrow’s 10 AM starter step', category: 'business', energy: 1, done: false, subtasks: [] },
+      { id: 't9', time: '14:20', duration: 40, title: 'Leave for school pickup (2:40 PM bell) & snack', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 't10', time: '17:15', duration: 15, title: '15-min speed tidy & fold laundry while dinner starts', category: 'errand', energy: 1, done: false, subtasks: [] },
+      { id: 't11', time: '17:30', duration: 60, title: 'Dinner prep & family table time', category: 'family', energy: 2, done: false, subtasks: [] }
+    ];
+
+    const ERRAND_DAY_TASKS = [
+      { id: 'e1', time: '07:30', duration: 30, title: 'Kids ready & school drop-off (7:45 AM)', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 'e2', time: '08:15', duration: 120, title: 'Bookend Errands / Doctor Appt / Fabric & Groceries', category: 'errand', energy: 2, done: false, subtasks: [
+        { text: 'Bring ID/insurance card, returns & shopping list', done: false },
+        { text: 'Grab coffee/water before heading home', done: false }
+      ]},
+      { id: 'e3', time: '10:30', duration: 90, title: 'Protected Founder Sprint: Top 1 creative/business build', category: 'business', energy: 3, done: false, subtasks: [] },
+      { id: 'e4', time: '12:00', duration: 20, title: 'Guilt-Free Fun Break (timer on, zero chores)', category: 'fun', energy: 0, done: false, subtasks: [] },
+      { id: 'e5', time: '12:20', duration: 30, title: 'Lunch & unpack groceries / start laundry', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 'e6', time: '12:50', duration: 70, title: 'Founder Sprint 2: Admin, emails & CEO shutdown', category: 'business', energy: 2, done: false, subtasks: [] },
+      { id: 'e7', time: '14:20', duration: 40, title: 'Leave for school pickup (2:40 PM bell)', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 'e8', time: '17:30', duration: 60, title: 'Dinner & family evening', category: 'family', energy: 2, done: false, subtasks: [] }
     ];
 
     const WEDNESDAY_TASKS = [
       { id: 'w1', time: '07:30', duration: 30, title: 'Kids ready & school drop-off (7:45 AM)', category: 'family', energy: 2, done: false, subtasks: [] },
-      { id: 'w2', time: '08:00', duration: 60, title: 'Movement / walk & quick home reset', category: 'self', energy: 1, done: false, subtasks: [] },
-      { id: 'w3', time: '10:00', duration: 90, title: 'Wednesday Power Sprint: Top 1 needle-moving task', category: 'business', energy: 3, done: false, subtasks: [
+      { id: 'w2', time: '08:00', duration: 60, title: 'Movement / walk & quick 10-min house reset', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 'w3', time: '10:00', duration: 75, title: 'Wednesday Power Sprint: Top 1 needle-moving task', category: 'business', energy: 3, done: false, subtasks: [
         { text: 'Pick the single highest-impact task only', done: false },
-        { text: 'Work distraction-free until 11:30 AM', done: false }
+        { text: 'Work distraction-free until 11:15 AM', done: false }
       ]},
-      { id: 'w4', time: '11:30', duration: 30, title: 'Light CEO wrap-up & pack water/snacks for car', category: 'business', energy: 1, done: false, subtasks: [] },
-      { id: 'w5', time: '12:15', duration: 45, title: 'Leave for early-release pickup (12:40 PM bell)', category: 'family', energy: 2, done: false, subtasks: [] },
-      { id: 'w6', time: '13:00', duration: 45, title: 'Lunch with kids & afternoon reset', category: 'family', energy: 1, done: false, subtasks: [] },
-      { id: 'w7', time: '17:30', duration: 60, title: 'Dinner prep & family evening', category: 'family', energy: 2, done: false, subtasks: [] }
+      { id: 'w4', time: '11:15', duration: 15, title: 'Quick Fun Dopamine Break (timed treat for you)', category: 'fun', energy: 0, done: false, subtasks: [] },
+      { id: 'w5', time: '11:30', duration: 30, title: 'Light CEO wrap-up & pack water/snacks for car', category: 'business', energy: 1, done: false, subtasks: [] },
+      { id: 'w6', time: '12:15', duration: 45, title: 'Leave for early-release pickup (12:40 PM bell)', category: 'family', energy: 2, done: false, subtasks: [] },
+      { id: 'w7', time: '13:00', duration: 45, title: 'Lunch with kids & afternoon reset', category: 'family', energy: 1, done: false, subtasks: [] },
+      { id: 'w8', time: '17:30', duration: 60, title: 'Dinner prep & family evening', category: 'family', energy: 2, done: false, subtasks: [] }
     ];
 
     const BREAK_TASKS = [
       { id: 'b1', time: '08:30', duration: 45, title: 'Slow morning, coffee & family breakfast', category: 'family', energy: 1, done: false, subtasks: [] },
       { id: 'b2', time: '10:00', duration: 90, title: 'Kids activity / outing / creative play', category: 'family', energy: 2, done: false, subtasks: [] },
-      { id: 'b3', time: '13:00', duration: 60, title: 'Break Pocket Sprint: Low-friction outline or brainstorm (60m)', category: 'business', energy: 2, done: false, subtasks: [
-        { text: 'Jot down 3 ideas or outline next step (15m)', done: false },
-        { text: 'Do one small self-contained task (35m)', done: false },
-        { text: 'Park remaining thoughts in Brain Dump (10m)', done: false }
+      { id: 'b3', time: '13:00', duration: 60, title: 'Break Pocket Sprint: Low-friction project step (60m)', category: 'business', energy: 2, done: false, subtasks: [
+        { text: 'Pick 1 small milestone from Projects tab (5m)', done: false },
+        { text: 'Work in a focused 45m pocket', done: false },
+        { text: 'Jot next step so it is ready next time (10m)', done: false }
       ]},
-      { id: 'b4', time: '15:00', duration: 45, title: 'Fresh air walk or quiet breather', category: 'self', energy: 1, done: false, subtasks: [] },
-      { id: 'b5', time: '17:30', duration: 60, title: 'Family dinner & relaxed evening', category: 'family', energy: 2, done: false, subtasks: [] }
+      { id: 'b4', time: '14:00', duration: 20, title: 'Guilt-Free Fun / Craft Break (quilt stitching, tea, or read)', category: 'fun', energy: 0, done: false, subtasks: [] },
+      { id: 'b5', time: '15:00', duration: 45, title: 'Fresh air walk or quiet breather', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 'b6', time: '17:30', duration: 60, title: 'Family dinner & relaxed evening', category: 'family', energy: 2, done: false, subtasks: [] }
     ];
 
     const HOLIDAY_TASKS = [
       { id: 'h1', time: '09:00', duration: 120, title: 'Holiday morning with family — zero work laptop', category: 'family', energy: 1, done: false, subtasks: [] },
-      { id: 'h2', time: '14:00', duration: 60, title: 'Quiet rest / walk / reading recharge', category: 'self', energy: 1, done: false, subtasks: [] },
+      { id: 'h2', time: '14:00', duration: 45, title: 'Guilt-Free Fun & Recharge (quilt, book, or movie)', category: 'fun', energy: 0, done: false, subtasks: [] },
       { id: 'h3', time: '17:00', duration: 90, title: 'Holiday meal & evening together', category: 'family', energy: 2, done: false, subtasks: [] }
+    ];
+
+    const DEFAULT_PROJECTS = [
+      {
+        id: 'p1',
+        title: 'Documentary: Zumba Teacher',
+        type: 'work',
+        status: 'Active',
+        notes: 'Short character-driven documentary capturing community energy, music, and her personal story.',
+        steps: [
+          { text: 'Draft 1-page treatment & 8 core interview questions', done: false },
+          { text: 'Ask teacher & class for filming permission + pick shoot dates', done: false },
+          { text: 'Prep camera & wireless lav mic kit for class B-roll', done: false },
+          { text: 'Film sit-down interview + 2 energetic class sessions', done: false },
+          { text: 'Select music cues & assemble rough 5-min stringout', done: false }
+        ]
+      },
+      {
+        id: 'p2',
+        title: 'Make a Quilt',
+        type: 'personal',
+        status: 'In Progress',
+        notes: 'Creative hands-on recharge project—great for 20-minute dopamine breaks!',
+        steps: [
+          { text: 'Finalize quilt pattern, color palette & finished dimensions', done: false },
+          { text: 'Pull fabrics from stash & list missing yardage/batting', done: false },
+          { text: 'Cut fabric strips and squares into labeled piles', done: false },
+          { text: 'Chain-piece quilt blocks (1–2 blocks per break)', done: false },
+          { text: 'Assemble quilt top, baste, quilt & bind edges', done: false }
+        ]
+      }
     ];
 
     const todayObj = new Date();
@@ -839,20 +1236,50 @@
 
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
       tasks: JSON.parse(JSON.stringify(autoBreak ? BREAK_TASKS : (autoWed ? WEDNESDAY_TASKS : REGULAR_TASKS))),
+      projects: JSON.parse(JSON.stringify(DEFAULT_PROJECTS)),
       inbox: [
-        { id: 'i1', text: 'Ideas to pick up after break ends' },
-        { id: 'i2', text: 'Low-friction outline task for a quiet afternoon pocket' }
+        { id: 'i1', text: 'Batch errands for next morning drop-off window' },
+        { id: 'i2', text: 'Scout best corner for filming Zumba class audio' }
       ],
+      accountability: {
+        buddyName: 'Creative Buddy / Focusmate',
+        channel: 'Text by 9:55 AM',
+        sessions: [
+          { id: 'a1', label: '50m Body Double — Zumba Doc outline', done: false },
+          { id: 'a2', label: '9:55 AM Text Pact — Share 1 win at 1:30 PM', done: false }
+        ]
+      },
       wedEarly: autoWed,
       breakMode: autoBreak
     };
 
+    if (!state.projects) state.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+    if (!state.accountability) {
+      state.accountability = {
+        buddyName: 'Creative Buddy / Focusmate',
+        channel: 'Text by 9:55 AM',
+        sessions: [
+          { id: 'a1', label: '50m Body Double — Zumba Doc outline', done: false },
+          { id: 'a2', label: '9:55 AM Text Pact — Share 1 win at 1:30 PM', done: false }
+        ]
+      };
+    }
+
+    let projectFilter = 'all';
     let timerInterval = null;
     let remainingSeconds = 0;
     let totalSeconds = 0;
     let isPaused = false;
     let activeFocusTaskId = null;
     let editingTaskId = null;
+    let editingProjectId = null;
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.add('show');
+      setTimeout(() => box.classList.remove('show'), 1800);
+    }
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -874,7 +1301,6 @@
       const breakBtn = document.getElementById('breakToggle');
       const wedBtn = document.getElementById('wedToggle');
       const banner = document.getElementById('zoneBanner');
-      const bannerAddBtn = document.getElementById('bannerAddBtn');
 
       breakBtn.classList.toggle('active-break', state.breakMode);
       wedBtn.classList.toggle('active-wed', !state.breakMode && state.wedEarly);
@@ -886,55 +1312,62 @@
       if (state.breakMode) {
         targetMins = 60;
         targetEnergy = 8;
-        document.getElementById('subGreeting').textContent = `${breakName} Mode · Pocket Sprints Only`;
+        document.getElementById('subGreeting').textContent = `${breakName} Mode · Pocket Sprints + Fun Breaks`;
         document.getElementById('bannerTitle').textContent = `🧸 ${breakName} — 60m Pocket Sprint`;
-        document.getElementById('bannerSub').textContent = 'Kids are home: shrink the goal to one 60-min window & protect family time.';
-        document.getElementById('founderTargetLabel').textContent = 'Break Goal 1h';
-        bannerAddBtn.onclick = () => openAddModal('13:00', 'business');
+        document.getElementById('bannerSub').textContent = 'Kids are home: 1 pocket sprint + scheduled fun break for you.';
+        document.getElementById('founderTargetLabel').textContent = 'Break 1h';
       } else if (state.wedEarly) {
         targetMins = 120;
         targetEnergy = 9;
         document.getElementById('subGreeting').textContent = 'Wednesday Light Load · Early Pickup 12:40 PM';
-        document.getElementById('bannerTitle').textContent = '🌿 10:00 AM – 12:00 PM Light Founder Sprint';
-        document.getElementById('bannerSub').textContent = 'Short day: 2 hrs focused work, leave at 12:15 PM for 12:40 PM bell.';
-        document.getElementById('founderTargetLabel').textContent = 'Wed Goal 2h';
-        bannerAddBtn.onclick = () => openAddModal('10:00', 'business');
+        document.getElementById('bannerTitle').textContent = '🌿 10:00 AM – 12:00 PM Light Sprint + Fun Break';
+        document.getElementById('bannerSub').textContent = 'Short day: 2 hrs focused work + 15m fun break · Leave 12:15 PM.';
+        document.getElementById('founderTargetLabel').textContent = 'Wed 2h';
       } else {
         targetMins = 240;
         targetEnergy = 12;
         document.getElementById('subGreeting').textContent = '10:00 AM – 2:00 PM Founder Window · Pickup 2:40 PM';
         document.getElementById('bannerTitle').textContent = '✨ 10:00 AM – 2:00 PM Founder Sprint';
-        document.getElementById('bannerSub').textContent = '4 hrs protected build time · Leave at 2:20 PM for 2:40 PM bell.';
-        document.getElementById('founderTargetLabel').textContent = 'Founder 4h';
-        bannerAddBtn.onclick = () => openAddModal('10:00', 'business');
+        document.getElementById('bannerSub').textContent = 'Includes a guilt-free 11:30 AM Fun Break · Leave 2:20 PM.';
+        document.getElementById('founderTargetLabel').textContent = 'Work 4h';
       }
 
       state.tasks.sort((a, b) => a.time.localeCompare(b.time));
 
       let founderMinsScheduled = 0;
       let founderMinsDone = 0;
+      let funMinsScheduled = 0;
+      let funMinsDone = 0;
       let totalEnergy = 0;
 
       state.tasks.forEach(t => {
-        totalEnergy += Number(t.energy || 1);
+        totalEnergy += Number(t.energy || 0);
         if (t.category === 'business') {
           founderMinsScheduled += Number(t.duration);
           if (t.done) founderMinsDone += Number(t.duration);
+        }
+        if (t.category === 'fun') {
+          funMinsScheduled += Number(t.duration);
+          if (t.done) funMinsDone += Number(t.duration);
         }
       });
 
       const schedHrs = (founderMinsScheduled / 60).toFixed(1);
       const doneHrs = (founderMinsDone / 60).toFixed(1);
-      document.getElementById('founderHoursText').textContent = `${doneHrs} / ${schedHrs}h`;
+      document.getElementById('founderHoursText').textContent = `${doneHrs}/${schedHrs}h`;
       document.getElementById('founderBar').style.width = `${Math.min(100, (founderMinsScheduled / targetMins) * 100)}%`;
       document.getElementById('founderBar').style.background = state.breakMode ? '#5E7A68' : '#C86D51';
 
-      document.getElementById('energyText').textContent = `${totalEnergy} / ${targetEnergy} pts`;
+      document.getElementById('funMinsText').textContent = `${funMinsDone}/${Math.max(20, funMinsScheduled)}m`;
+      document.getElementById('funBar').style.width = `${Math.min(100, (funMinsScheduled / 20) * 100)}%`;
+
+      document.getElementById('energyText').textContent = `${totalEnergy}/${targetEnergy}`;
       const energyPct = Math.min(100, (totalEnergy / targetEnergy) * 100);
       const energyBar = document.getElementById('energyBar');
       energyBar.style.width = `${energyPct}%`;
       energyBar.style.background = totalEnergy > targetEnergy ? '#C86D51' : '#5E7A68';
 
+      // Render Timeline
       const container = document.getElementById('timelineContainer');
       container.innerHTML = '';
 
@@ -945,18 +1378,30 @@
       state.tasks.forEach(task => {
         const catClass = `cat-${task.category}`;
         const tagClass = `tag-${task.category}`;
-        const catLabel = task.category === 'business' ? '🚀 BUSINESS' : task.category === 'family' ? '💛 FAMILY / PICKUP' : '🌿 RESET';
-        const energyBolt = '⚡'.repeat(task.energy || 1);
+        const labelMap = {
+          business: '🚀 WORK / PROJECT',
+          fun: '✨ FUN / PERSONAL',
+          errand: '🚗 ERRAND / HOME',
+          family: '💛 KIDS / PICKUP',
+          self: '🌿 RESET'
+        };
+        const catLabel = labelMap[task.category] || '🌿 BLOCK';
+        const energyBolt = task.energy > 0 ? '⚡'.repeat(task.energy) : '🔋 Recharge';
 
         let subtasksHtml = '';
         if (task.subtasks && task.subtasks.length > 0) {
           subtasksHtml = `<div class="subtasks">` + task.subtasks.map((st, idx) => `
-            <div class="subtask-item ${st.done ? 'sub-done' : ''}" onclick="toggleSubtask('${task.id}', ${idx})">
-              <span>${st.done ? '☑' : '☐'}</span>
-              <span>${st.text}</span>
+            <div class="subtask-item ${st.done ? 'sub-done' : ''}">
+              <div class="subtask-left" onclick="toggleSubtask('${task.id}', ${idx})">
+                <span>${st.done ? '☑' : '☐'}</span>
+                <span>${st.text}</span>
+              </div>
             </div>
           `).join('') + `</div>`;
         }
+
+        const focusBtnClass = task.category === 'fun' ? 'mini-btn fun-trigger' : 'mini-btn focus-trigger';
+        const focusBtnText = task.category === 'fun' ? '▶ Start Fun Timer' : '▶ Focus';
 
         const card = document.createElement('div');
         card.className = `task-card ${catClass} ${task.done ? 'done' : ''}`;
@@ -972,7 +1417,7 @@
               <div class="task-title">${task.title}</div>
               ${subtasksHtml}
               <div class="task-actions">
-                <button class="mini-btn focus-trigger" onclick="startFocus('${task.id}')">▶ Focus</button>
+                <button class="${focusBtnClass}" onclick="startFocus('${task.id}')">${focusBtnText}</button>
                 <button class="mini-btn" onclick="openEditModal('${task.id}')">✎ Edit</button>
                 <button class="mini-btn" onclick="splitTask('${task.id}')">🪄 Steps</button>
                 <button class="mini-btn" onclick="deleteTask('${task.id}')">✕</button>
@@ -983,10 +1428,13 @@
         container.appendChild(card);
       });
 
+      renderProjects();
+      renderAccountability();
+
+      // Render Inbox
       const inboxContainer = document.getElementById('inboxContainer');
-      document.getElementById('inboxNavLabel').textContent = state.inbox.length ? `Dump (${state.inbox.length})` : 'Brain Dump';
+      document.getElementById('inboxNavLabel').textContent = state.inbox.length ? `Dump (${state.inbox.length})` : 'Dump';
       const bizTargetTime = state.breakMode ? '13:00' : '10:00';
-      const afterTime = state.breakMode ? '15:00' : (state.wedEarly ? '13:15' : '15:15');
 
       inboxContainer.innerHTML = state.inbox.length === 0
         ? `<p style="text-align:center; color:var(--text-muted); padding:24px 0;">Mind clear! Nothing parked right now.</p>`
@@ -995,11 +1443,345 @@
             <div class="task-title" style="font-size:0.95rem;">${item.text}</div>
             <div class="task-actions">
               <button class="mini-btn focus-trigger" onclick="promoteDumpItem('${item.id}', '${bizTargetTime}', 'business')">→ Sprint (${formatTime12(bizTargetTime)})</button>
-              <button class="mini-btn" onclick="promoteDumpItem('${item.id}', '${afterTime}', 'family')">→ Later (${formatTime12(afterTime)})</button>
-              <button class="mini-btn" onclick="deleteDumpItem('${item.id}')">Delete</button>
+              <button class="mini-btn" onclick="promoteDumpItem('${item.id}', '08:30', 'errand')">→ 8:30 AM Errand</button>
+              <button class="mini-btn fun-trigger" onclick="promoteDumpItem('${item.id}', '11:30', 'fun')">→ Fun Break</button>
+              <button class="mini-btn" onclick="deleteDumpItem('${item.id}')">✕</button>
             </div>
           </div>
         `).join('');
+    }
+
+    function renderAccountability() {
+      const nextBiz = state.tasks.find(t => !t.done && t.category === 'business');
+      const focusTopic = nextBiz ? nextBiz.title : 'my top project milestone';
+      const windowLabel = state.breakMode ? 'my break pocket sprint' : (state.wedEarly ? 'my 10 AM–12 PM sprint' : 'my 10 AM–2 PM block');
+
+      document.getElementById('kickoffScriptText').textContent =
+        `"Hey! Starting ${windowLabel} right now—my focus is: ${focusTopic}. I’ll check in around 1:30 PM with how far I got!"`;
+      document.getElementById('checkinScriptText').textContent =
+        `"1:30 PM check-in: here’s what moved forward on ${focusTopic}, and what I’m leaving for tomorrow so I can shift smoothly into mom mode."`;
+
+      document.getElementById('buddyNameInput').value = state.accountability.buddyName || '';
+      document.getElementById('buddyChannelInput').value = state.accountability.channel || '';
+
+      const doneSessions = state.accountability.sessions.filter(s => s.done).length;
+      document.getElementById('anchorCountBadge').textContent = `${doneSessions}/${state.accountability.sessions.length} done`;
+
+      const logEl = document.getElementById('anchorLogList');
+      logEl.innerHTML = state.accountability.sessions.map((s, idx) => `
+        <div class="subtask-item ${s.done ? 'sub-done' : ''}">
+          <div class="subtask-left" onclick="toggleAnchorSession(${idx})">
+            <span>${s.done ? '☑' : '☐'}</span>
+            <span>${s.label}</span>
+          </div>
+          <button class="mini-btn" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteAnchorSession(${idx})">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function copyScript(elId) {
+      const text = document.getElementById(elId).textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast('Script copied to clipboard!')).catch(() => showToast('Ready to copy!'));
+      } else {
+        showToast('Ready to copy!');
+      }
+    }
+
+    function updateBuddyInfo() {
+      state.accountability.buddyName = document.getElementById('buddyNameInput').value;
+      state.accountability.channel = document.getElementById('buddyChannelInput').value;
+      saveState();
+    }
+
+    function addBodyDoubleBlock() {
+      const buddy = state.accountability.buddyName.trim() || 'Body Double Session';
+      state.tasks.push({
+        id: 't' + Date.now(),
+        time: state.breakMode ? '13:00' : '10:00',
+        duration: 50,
+        title: `50m Body Double (${buddy}): Focus on top project step`,
+        category: 'business',
+        energy: 3,
+        done: false,
+        subtasks: [
+          { text: 'State 1 concrete goal out loud / in chat', done: false },
+          { text: 'Work silently for 50 minutes', done: false }
+        ]
+      });
+      state.accountability.sessions.push({
+        id: 'a' + Date.now(),
+        label: `50m Body Double (${buddy})`,
+        done: false
+      });
+      saveState();
+      switchView('today');
+    }
+
+    function logAnchorSession() {
+      const buddy = state.accountability.buddyName.trim() || 'Accountability Check-In';
+      state.accountability.sessions.unshift({
+        id: 'a' + Date.now(),
+        label: `${buddy} — ${new Date().toLocaleDateString('en-US', { weekday: 'short' })}`,
+        done: true
+      });
+      saveState();
+      showToast('Accountability session logged!');
+    }
+
+    function toggleAnchorSession(idx) {
+      if (state.accountability.sessions[idx]) {
+        state.accountability.sessions[idx].done = !state.accountability.sessions[idx].done;
+        saveState();
+      }
+    }
+
+    function deleteAnchorSession(idx) {
+      state.accountability.sessions.splice(idx, 1);
+      saveState();
+    }
+
+    function shrinkNextBusinessBlock() {
+      const nextBiz = state.tasks.find(t => !t.done && t.category === 'business');
+      if (!nextBiz) {
+        showToast('No upcoming business block to shrink.');
+        return;
+      }
+      nextBiz.duration = 25;
+      nextBiz.title = `${nextBiz.title} (25m low-pressure choice)`;
+      saveState();
+      switchView('today');
+    }
+
+    function parkRequestModal() {
+      const req = prompt('What request from someone else do you want to park until after pickup?');
+      if (req && req.trim()) {
+        state.inbox.unshift({ id: 'i' + Date.now(), text: `[After Pickup] ${req.trim()}` });
+        saveState();
+        showToast('Parked in Brain Dump for later!');
+      }
+    }
+
+    function renderProjects() {
+      const container = document.getElementById('projectsContainer');
+      const filtered = state.projects.filter(p => projectFilter === 'all' || p.type === projectFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:28px 0;">No projects in this category yet—tap <strong>+ New Project</strong> above to start one!</p>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(proj => {
+        const total = proj.steps.length;
+        const doneCount = proj.steps.filter(s => s.done).length;
+        const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+        const isPersonal = proj.type === 'personal';
+        const tagClass = isPersonal ? 'tag-self' : 'tag-business';
+        const tagLabel = isPersonal ? '🧵 PERSONAL' : '🚀 WORK / CREATIVE';
+        const fillColor = isPersonal ? 'var(--sage)' : 'var(--terracotta)';
+
+        const stepsHtml = proj.steps.map((st, idx) => `
+          <div class="subtask-item ${st.done ? 'sub-done' : ''}">
+            <div class="subtask-left" onclick="toggleProjectStep('${proj.id}', ${idx})">
+              <span>${st.done ? '☑' : '☐'}</span>
+              <span>${st.text}</span>
+            </div>
+            <div style="display:flex; gap:4px; flex-shrink:0;">
+              ${!st.done ? `<button class="mini-btn" style="padding:3px 7px; font-size:0.7rem;" onclick="scheduleProjectStep('${proj.id}', ${idx})">→ Today</button>` : ''}
+              <button class="mini-btn" style="padding:3px 6px; font-size:0.7rem;" onclick="deleteProjectStep('${proj.id}', ${idx})">✕</button>
+            </div>
+          </div>
+        `).join('');
+
+        return `
+          <div class="project-card ${isPersonal ? 'proj-personal' : ''}">
+            <div class="proj-header">
+              <div>
+                <div class="task-meta">
+                  <span class="cat-tag ${tagClass}">${tagLabel}</span>
+                  <span class="time-badge">${proj.status}</span>
+                </div>
+                <div class="proj-title">${proj.title}</div>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="mini-btn" onclick="openEditProjectModal('${proj.id}')">✎</button>
+                <button class="mini-btn" onclick="deleteProject('${proj.id}')">✕</button>
+              </div>
+            </div>
+            ${proj.notes ? `<div class="proj-notes">${proj.notes}</div>` : ''}
+            <div class="proj-progress-row">
+              <div class="progress-track">
+                <div class="progress-fill" style="width:${pct}%; background:${fillColor};"></div>
+              </div>
+              <span class="proj-pct">${doneCount}/${total} (${pct}%)</span>
+            </div>
+            <div class="subtasks">
+              ${stepsHtml || '<span style="font-size:0.8rem; color:var(--text-muted);">No milestones yet—add your first step below.</span>'}
+            </div>
+            <div class="add-step-row">
+              <input type="text" id="stepInput-${proj.id}" placeholder="Add next milestone..." onkeydown="if(event.key==='Enter') addProjectStep('${proj.id}')" />
+              <button class="mini-btn" style="padding:8px 12px;" onclick="addProjectStep('${proj.id}')">+ Step</button>
+            </div>
+            <div class="task-actions">
+              <button class="mini-btn ${isPersonal ? 'fun-trigger' : 'focus-trigger'}" onclick="scheduleNextFromProject('${proj.id}')">
+                📅 Schedule Next Step Today
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function setProjectFilter(filter) {
+      projectFilter = filter;
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      document.getElementById(`filter-${filter}`).classList.add('active');
+      renderProjects();
+    }
+
+    function toggleProjectStep(projId, idx) {
+      const p = state.projects.find(x => x.id === projId);
+      if (p && p.steps[idx]) {
+        p.steps[idx].done = !p.steps[idx].done;
+        if (p.steps[idx].done) playChime();
+        saveState();
+      }
+    }
+
+    function addProjectStep(projId) {
+      const p = state.projects.find(x => x.id === projId);
+      const input = document.getElementById(`stepInput-${projId}`);
+      if (!p || !input) return;
+      const val = input.value.trim();
+      if (!val) return;
+      p.steps.push({ text: val, done: false });
+      input.value = '';
+      saveState();
+    }
+
+    function deleteProjectStep(projId, idx) {
+      const p = state.projects.find(x => x.id === projId);
+      if (p) {
+        p.steps.splice(idx, 1);
+        saveState();
+      }
+    }
+
+    function scheduleProjectStep(projId, idx) {
+      const p = state.projects.find(x => x.id === projId);
+      if (!p || !p.steps[idx]) return;
+      const stepText = p.steps[idx].text;
+      const isPersonal = p.type === 'personal';
+
+      const targetTime = isPersonal
+        ? (state.breakMode ? '14:00' : '11:30')
+        : (state.breakMode ? '13:00' : '10:00');
+
+      state.tasks.push({
+        id: 't' + Date.now(),
+        time: targetTime,
+        duration: isPersonal ? 30 : 60,
+        title: `${p.title}: ${stepText}`,
+        category: isPersonal ? 'fun' : 'business',
+        energy: isPersonal ? 0 : 2,
+        done: false,
+        subtasks: []
+      });
+      saveState();
+      switchView('today');
+    }
+
+    function scheduleNextFromProject(projId) {
+      const p = state.projects.find(x => x.id === projId);
+      if (!p) return;
+      const nextIdx = p.steps.findIndex(s => !s.done);
+      if (nextIdx !== -1) {
+        scheduleProjectStep(projId, nextIdx);
+      } else {
+        const isPersonal = p.type === 'personal';
+        state.tasks.push({
+          id: 't' + Date.now(),
+          time: isPersonal ? '11:30' : '10:00',
+          duration: isPersonal ? 30 : 60,
+          title: `Work on ${p.title}`,
+          category: isPersonal ? 'fun' : 'business',
+          energy: isPersonal ? 0 : 2,
+          done: false,
+          subtasks: []
+        });
+        saveState();
+        switchView('today');
+      }
+    }
+
+    function openProjectModal() {
+      editingProjectId = null;
+      document.getElementById('projModalHeading').textContent = 'New Ongoing Project';
+      document.getElementById('projTitle').value = '';
+      document.getElementById('projType').value = 'work';
+      document.getElementById('projStatus').value = 'Active';
+      document.getElementById('projNotes').value = '';
+      document.getElementById('projInitialSteps').value = '';
+      document.getElementById('initialStepsGroup').style.display = 'block';
+      document.getElementById('projectModal').classList.add('open');
+      setTimeout(() => document.getElementById('projTitle').focus(), 100);
+    }
+
+    function openEditProjectModal(projId) {
+      const p = state.projects.find(x => x.id === projId);
+      if (!p) return;
+      editingProjectId = projId;
+      document.getElementById('projModalHeading').textContent = 'Edit Project';
+      document.getElementById('projTitle').value = p.title;
+      document.getElementById('projType').value = p.type;
+      document.getElementById('projStatus').value = p.status;
+      document.getElementById('projNotes').value = p.notes || '';
+      document.getElementById('initialStepsGroup').style.display = 'none';
+      document.getElementById('projectModal').classList.add('open');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('projectModal').classList.remove('open');
+      editingProjectId = null;
+    }
+
+    function saveProjectFromModal() {
+      const title = document.getElementById('projTitle').value.trim();
+      if (!title) return;
+
+      if (editingProjectId) {
+        const p = state.projects.find(x => x.id === editingProjectId);
+        if (p) {
+          p.title = title;
+          p.type = document.getElementById('projType').value;
+          p.status = document.getElementById('projStatus').value;
+          p.notes = document.getElementById('projNotes').value.trim();
+        }
+      } else {
+        const rawSteps = document.getElementById('projInitialSteps').value
+          .split('\n')
+          .map(s => s.trim())
+          .filter(Boolean)
+          .map(text => ({ text, done: false }));
+
+        state.projects.unshift({
+          id: 'p' + Date.now(),
+          title,
+          type: document.getElementById('projType').value,
+          status: document.getElementById('projStatus').value,
+          notes: document.getElementById('projNotes').value.trim(),
+          steps: rawSteps
+        });
+      }
+      closeProjectModal();
+      saveState();
+    }
+
+    function deleteProject(projId) {
+      if (confirm('Delete this project and its checklist?')) {
+        state.projects = state.projects.filter(x => x.id !== projId);
+        saveState();
+      }
     }
 
     function toggleTaskDone(id) {
@@ -1027,8 +1809,8 @@
         if (custom) t.subtasks.push({ text: custom, done: false });
       } else {
         t.subtasks = [
-          { text: `Prep workspace & open only what’s needed for "${t.title}"`, done: false },
-          { text: `Do the messy first 15 minutes without editing`, done: false },
+          { text: `Prep & gather only what’s needed for "${t.title}"`, done: false },
+          { text: `Do the first 15 minutes with a timer`, done: false },
           { text: `Wrap up & note the very next step`, done: false }
         ];
       }
@@ -1041,14 +1823,14 @@
     }
 
     function sweepUnfinished() {
-      const unfinished = state.tasks.filter(t => !t.done && t.category === 'business');
+      const unfinished = state.tasks.filter(t => !t.done && (t.category === 'business' || t.category === 'errand'));
       if (unfinished.length === 0) {
-        alert('All business blocks are checked off!');
+        alert('All work and errand blocks are checked off!');
         return;
       }
-      if (confirm(`Move ${unfinished.length} unfinished business block(s) to your Brain Dump Inbox for a clean slate?`)) {
+      if (confirm(`Move ${unfinished.length} unfinished block(s) to your Brain Dump Inbox for a clean slate?`)) {
         unfinished.forEach(t => state.inbox.push({ id: 'i' + Date.now() + Math.random(), text: t.title }));
-        state.tasks = state.tasks.filter(t => t.done || t.category !== 'business');
+        state.tasks = state.tasks.filter(t => t.done || (t.category !== 'business' && t.category !== 'errand'));
         saveState();
       }
     }
@@ -1080,10 +1862,10 @@
       state.tasks.push({
         id: 't' + Date.now(),
         time: defaultTime,
-        duration: state.breakMode ? 30 : 45,
+        duration: category === 'fun' ? 20 : (state.breakMode ? 30 : 45),
         title: item.text,
         category: category,
-        energy: 2,
+        energy: category === 'fun' ? 0 : 2,
         done: false,
         subtasks: []
       });
@@ -1103,6 +1885,10 @@
         state.breakMode = false;
         state.wedEarly = false;
         state.tasks = JSON.parse(JSON.stringify(REGULAR_TASKS));
+      } else if (type === 'errands') {
+        state.breakMode = false;
+        state.wedEarly = false;
+        state.tasks = JSON.parse(JSON.stringify(ERRAND_DAY_TASKS));
       } else if (type === 'wednesday') {
         state.breakMode = false;
         state.wedEarly = true;
@@ -1131,9 +1917,9 @@
       editingTaskId = null;
       document.getElementById('modalHeading').textContent = 'Add Time Block';
       document.getElementById('taskTime').value = presetTime || (state.breakMode ? '13:00' : '10:00');
-      document.getElementById('taskDuration').value = state.breakMode ? '30' : '60';
+      document.getElementById('taskDuration').value = presetCat === 'fun' ? '20' : (state.breakMode ? '30' : '60');
       document.getElementById('taskCategory').value = presetCat;
-      document.getElementById('taskEnergy').value = '2';
+      document.getElementById('taskEnergy').value = presetCat === 'fun' ? '0' : '2';
       document.getElementById('taskTitle').value = '';
       document.getElementById('addModal').classList.add('open');
       setTimeout(() => document.getElementById('taskTitle').focus(), 100);
@@ -1148,7 +1934,7 @@
       document.getElementById('taskTime').value = t.time;
       document.getElementById('taskDuration').value = String(t.duration);
       document.getElementById('taskCategory').value = t.category;
-      document.getElementById('taskEnergy').value = String(t.energy || 2);
+      document.getElementById('taskEnergy').value = String(t.energy ?? 2);
       document.getElementById('addModal').classList.add('open');
     }
 
@@ -1214,7 +2000,12 @@
       isPaused = false;
 
       document.getElementById('focusTaskTitle').textContent = task.title;
-      document.getElementById('focusCatBadge').textContent = task.category.toUpperCase() + ' FOCUS';
+      const isFun = task.category === 'fun';
+      document.getElementById('focusCatBadge').textContent = isFun ? '✨ GUILT-FREE FUN / CRAFT TIMER' : (task.category.toUpperCase() + ' FOCUS');
+      document.getElementById('focusSubCaption').textContent = isFun
+        ? 'Enjoy your creative recharge completely—the chime will tell you when to switch back.'
+        : 'One tab. One task. You’ve got this.';
+      document.getElementById('progressRing').style.stroke = isFun ? '#8A5A75' : '#C86D51';
       document.getElementById('pauseResumeBtn').textContent = 'Pause';
       document.getElementById('focusOverlay').classList.add('open');
 
